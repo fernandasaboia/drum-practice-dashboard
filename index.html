@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Drum Practice Book</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --surface: #13131a;
+      --surface2: #1c1c26;
+      --border: #2a2a3a;
+      --accent: #ff6b35;
+      --accent2: #f0a500;
+      --green: #2d9e6b;
+      --yellow: #f0a500;
+      --red: #e84040;
+      --text: #f0f0f5;
+      --muted: #6b6b80;
+      --font-display: 'Bebas Neue', sans-serif;
+      --font-body: 'DM Sans', sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      min-height: 100vh;
+    }
+
+    /* Header */
+    header {
+      border-bottom: 1px solid var(--border);
+      padding: 0 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+      position: sticky;
+      top: 0;
+      background: rgba(10,10,15,0.95);
+      backdrop-filter: blur(12px);
+      z-index: 100;
+    }
+
+    .logo {
+      font-family: var(--font-display);
+      font-size: 28px;
+      letter-spacing: 2px;
+      color: var(--accent);
+    }
+
+    .logo span { color: var(--text); }
+
+    .header-stats {
+      display: flex;
+      gap: 32px;
+    }
+
+    .header-stat {
+      text-align: center;
+    }
+
+    .header-stat-value {
+      font-family: var(--font-display);
+      font-size: 22px;
+      color: var(--accent);
+      line-height: 1;
+    }
+
+    .header-stat-label {
+      font-size: 10px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: 2px;
+    }
+
+    /* Main layout */
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px;
+    }
+
+    /* Filter bar */
+    .filter-bar {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 32px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .filter-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--muted);
+      margin-right: 4px;
+    }
+
+    .filter-chip {
+      padding: 6px 16px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--muted);
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: var(--font-body);
+    }
+
+    .filter-chip:hover, .filter-chip.active {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(255,107,53,0.08);
+    }
+
+    /* Practice grid */
+    .practice-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 16px;
+    }
+
+    /* Practice card */
+    .practice-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      transition: all 0.2s;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .practice-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    }
+
+    .practice-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: var(--accent);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .practice-card:hover::before { opacity: 1; }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 14px;
+      gap: 12px;
+    }
+
+    .card-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.3;
+    }
+
+    .card-title a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .card-title a:hover { color: var(--accent); }
+
+    .card-subtitle {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 3px;
+    }
+
+    .last-practiced {
+      font-size: 11px;
+      padding: 3px 10px;
+      border-radius: 12px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .last-practiced.fresh { background: rgba(45,158,107,0.15); color: var(--green); }
+    .last-practiced.stale { background: rgba(240,165,0,0.15); color: var(--yellow); }
+    .last-practiced.overdue { background: rgba(232,64,64,0.15); color: var(--red); }
+    .last-practiced.never { background: rgba(107,107,128,0.15); color: var(--muted); }
+
+    /* BPM display */
+    .bpm-section {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .bpm-display {
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+    }
+
+    .bpm-value {
+      font-family: var(--font-display);
+      font-size: 36px;
+      line-height: 1;
+    }
+
+    .bpm-value.green { color: var(--green); }
+    .bpm-value.yellow { color: var(--yellow); }
+    .bpm-value.red { color: var(--red); }
+    .bpm-value.none { color: var(--muted); font-size: 24px; }
+
+    .bpm-unit {
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .bpm-goal {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .bpm-goal strong { color: var(--text); }
+
+    /* Progress bar */
+    .bpm-progress {
+      margin-bottom: 14px;
+    }
+
+    .bpm-progress-bar {
+      height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .bpm-progress-fill {
+      height: 100%;
+      border-radius: 2px;
+      transition: width 0.5s ease;
+    }
+
+    .bpm-progress-fill.green { background: var(--green); }
+    .bpm-progress-fill.yellow { background: var(--yellow); }
+    .bpm-progress-fill.red { background: var(--red); }
+
+    /* Skills */
+    .card-skills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+
+    .skill-tag {
+      font-size: 11px;
+      padding: 3px 10px;
+      border-radius: 12px;
+      background: var(--surface2);
+      color: var(--muted);
+      border: 1px solid var(--border);
+    }
+
+    /* Notes */
+    .card-notes {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.5;
+      font-style: italic;
+      border-top: 1px solid var(--border);
+      padding-top: 12px;
+    }
+
+    /* Chart modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+    }
+
+    .modal-overlay.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .modal {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px;
+      width: 600px;
+      max-width: 90vw;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 24px;
+    }
+
+    .modal-title {
+      font-family: var(--font-display);
+      font-size: 24px;
+      color: var(--accent);
+      letter-spacing: 1px;
+    }
+
+    .modal-subtitle {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: 20px;
+      cursor: pointer;
+      padding: 0;
+      line-height: 1;
+    }
+
+    .modal-close:hover { color: var(--text); }
+
+    .chart-container {
+      position: relative;
+      height: 250px;
+      margin-bottom: 24px;
+    }
+
+    /* Editable fields */
+    .editable {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 6px 10px;
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 13px;
+      width: 100%;
+      transition: border-color 0.15s;
+    }
+
+    .editable:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .modal-fields {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .modal-field label {
+      display: block;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--muted);
+      margin-bottom: 5px;
+    }
+
+    .save-btn {
+      padding: 10px 24px;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: var(--font-body);
+      transition: opacity 0.15s;
+    }
+
+    .save-btn:hover { opacity: 0.85; }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 80px 20px;
+    }
+
+    .empty-state-icon {
+      font-size: 64px;
+      margin-bottom: 16px;
+    }
+
+    .empty-state h2 {
+      font-family: var(--font-display);
+      font-size: 32px;
+      letter-spacing: 2px;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .empty-state p {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    /* Loading */
+    .loading {
+      text-align: center;
+      padding: 80px;
+      color: var(--muted);
+      font-family: var(--font-display);
+      font-size: 24px;
+      letter-spacing: 3px;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    .loading { animation: pulse 1.5s infinite; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Drum<span>Book</span></div>
+  <div class="header-stats">
+    <div class="header-stat">
+      <div class="header-stat-value" id="stat-total">—</div>
+      <div class="header-stat-label">Practices</div>
+    </div>
+    <div class="header-stat">
+      <div class="header-stat-value" id="stat-sessions">—</div>
+      <div class="header-stat-label">Sessions</div>
+    </div>
+    <div class="header-stat">
+      <div class="header-stat-value" id="stat-due">—</div>
+      <div class="header-stat-label">Due for Practice</div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="filter-bar" id="filter-bar">
+    <span class="filter-label">Filter:</span>
+    <div class="filter-chip active" data-skill="all">All</div>
+  </div>
+  <div id="practices-container"><div class="loading">LOADING...</div></div>
+</main>
+
+<!-- Detail modal -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal" id="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="modal-title"></div>
+        <div class="modal-subtitle" id="modal-subtitle"></div>
+      </div>
+      <button class="modal-close" id="modal-close">✕</button>
+    </div>
+    <div class="chart-container">
+      <canvas id="bpm-chart"></canvas>
+    </div>
+    <div class="modal-fields">
+      <div class="modal-field">
+        <label>Goal BPM</label>
+        <input type="number" class="editable" id="edit-goal-bpm" placeholder="e.g. 120" />
+      </div>
+      <div class="modal-field">
+        <label>Notes</label>
+        <input type="text" class="editable" id="edit-notes" placeholder="Add notes..." />
+      </div>
+    </div>
+    <button class="save-btn" id="modal-save">Save Changes</button>
+  </div>
+</div>
+
+<script>
+  const SUPABASE_URL = 'https://diqfnsslthcnmcirqjqi.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRpcWZuc3NsdGhjbm1jaXJxanFpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzNjYwMjUsImV4cCI6MjA4Njk0MjAyNX0.RBPriP0CeChu-qB5jf4SbqwyS9dh4CsyUs6beaqk0CE';
+
+  let allPractices = [];
+  let allSessions = [];
+  let allSkills = [];
+  let practiceSkills = [];
+  let activeSkillFilter = 'all';
+  let currentPractice = null;
+  let bpmChart = null;
+
+  async function supabaseFetch(path) {
+    const res = await fetch(SUPABASE_URL + '/rest/v1/' + path, {
+      headers: {
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+      }
+    });
+    const text = await res.text();
+    return text ? JSON.parse(text) : [];
+  }
+
+  async function supabaseUpdate(table, id, data) {
+    await fetch(SUPABASE_URL + '/rest/v1/' + table + '?id=eq.' + id, {
+      method: 'PATCH',
+      headers: {
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify(data)
+    });
+  }
+
+  async function loadData() {
+    const [practices, sessions, skills, ps] = await Promise.all([
+      supabaseFetch('practices?order=created_at.desc'),
+      supabaseFetch('sessions?order=practiced_at.asc'),
+      supabaseFetch('skills?order=name'),
+      supabaseFetch('practice_skills')
+    ]);
+    allPractices = practices;
+    allSessions = sessions;
+    allSkills = skills;
+    practiceSkills = ps;
+    updateStats();
+    renderFilters();
+    renderPractices();
+  }
+
+  function updateStats() {
+    document.getElementById('stat-total').textContent = allPractices.length;
+    document.getElementById('stat-sessions').textContent = allSessions.length;
+    const due = allPractices.filter(p => {
+      const last = lastSessionDate(p.id);
+      if (!last) return true;
+      const days = (Date.now() - new Date(last)) / (1000 * 60 * 60 * 24);
+      return days > 14;
+    }).length;
+    document.getElementById('stat-due').textContent = due;
+  }
+
+  function lastSessionDate(practiceId) {
+    const sessions = allSessions.filter(s => s.practice_id === practiceId);
+    if (!sessions.length) return null;
+    return sessions[sessions.length - 1].practiced_at;
+  }
+
+  function latestBpm(practiceId) {
+    const sessions = allSessions.filter(s => s.practice_id === practiceId && s.bpm_played);
+    if (!sessions.length) return null;
+    return sessions[sessions.length - 1].bpm_played;
+  }
+
+  function getSkillsForPractice(practiceId) {
+    const skillIds = practiceSkills.filter(ps => ps.practice_id === practiceId).map(ps => ps.skill_id);
+    return allSkills.filter(s => skillIds.includes(s.id));
+  }
+
+  function bpmColor(current, goal) {
+    if (!current || !goal) return 'none';
+    const ratio = current / goal;
+    if (ratio >= 1) return 'green';
+    if (ratio >= 0.85) return 'yellow';
+    return 'red';
+  }
+
+  function lastPracticedLabel(practiceId) {
+    const date = lastSessionDate(practiceId);
+    if (!date) return { text: 'Never practiced', cls: 'never' };
+    const days = (Date.now() - new Date(date)) / (1000 * 60 * 60 * 24);
+    if (days < 14) return { text: Math.floor(days) + 'd ago', cls: 'fresh' };
+    if (days < 30) return { text: Math.floor(days) + 'd ago', cls: 'stale' };
+    return { text: Math.floor(days) + 'd ago', cls: 'overdue' };
+  }
+
+  function formatDate(dateStr) {
+    return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  }
+
+  function renderFilters() {
+    const bar = document.getElementById('filter-bar');
+    bar.innerHTML = '<span class="filter-label">Filter:</span><div class="filter-chip active" data-skill="all">All</div>';
+    allSkills.forEach(skill => {
+      const chip = document.createElement('div');
+      chip.className = 'filter-chip';
+      chip.setAttribute('data-skill', skill.id);
+      chip.textContent = skill.name;
+      bar.appendChild(chip);
+    });
+    bar.querySelectorAll('.filter-chip').forEach(chip => {
+      chip.addEventListener('click', function() {
+        bar.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        activeSkillFilter = chip.getAttribute('data-skill');
+        renderPractices();
+      });
+    });
+  }
+
+  function renderPractices() {
+    const container = document.getElementById('practices-container');
+    let practices = allPractices;
+
+    if (activeSkillFilter !== 'all') {
+      const matchingPracticeIds = practiceSkills
+        .filter(ps => ps.skill_id === activeSkillFilter)
+        .map(ps => ps.practice_id);
+      practices = practices.filter(p => matchingPracticeIds.includes(p.id));
+    }
+
+    if (!practices.length) {
+      container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🥁</div><h2>NO PRACTICES YET</h2><p>Open a Drumeo assignment and click "Add to Practice Book"</p></div>';
+      return;
+    }
+
+    container.innerHTML = '';
+    const grid = document.createElement('div');
+    grid.className = 'practice-grid';
+
+    practices.forEach(practice => {
+      const card = document.createElement('div');
+      card.className = 'practice-card';
+
+      const current = latestBpm(practice.id);
+      const goal = practice.goal_bpm;
+      const color = bpmColor(current, goal);
+      const lp = lastPracticedLabel(practice.id);
+      const skills = getSkillsForPractice(practice.id);
+
+      const progressPct = (current && goal) ? Math.min(100, Math.round((current / goal) * 100)) : 0;
+
+      card.innerHTML =
+        '<div class="card-header">' +
+          '<div>' +
+            '<div class="card-title"><a href="' + practice.class_url + '" target="_blank">' + practice.practice_name + '</a></div>' +
+            '<div class="card-subtitle">' + practice.class_name + ' — ' + practice.assignment_name + '</div>' +
+          '</div>' +
+          '<div class="last-practiced ' + lp.cls + '">' + lp.text + '</div>' +
+        '</div>' +
+        '<div class="bpm-section">' +
+          '<div class="bpm-display">' +
+            '<div class="bpm-value ' + color + '">' + (current || '—') + '</div>' +
+            '<div class="bpm-unit">BPM</div>' +
+          '</div>' +
+          (goal ? '<div class="bpm-goal">Goal: <strong>' + goal + '</strong></div>' : '') +
+        '</div>' +
+        (goal && current ? '<div class="bpm-progress"><div class="bpm-progress-bar"><div class="bpm-progress-fill ' + color + '" style="width:' + progressPct + '%"></div></div></div>' : '') +
+        (skills.length ? '<div class="card-skills">' + skills.map(s => '<div class="skill-tag">' + s.name + '</div>').join('') + '</div>' : '') +
+        (practice.notes ? '<div class="card-notes">' + practice.notes + '</div>' : '');
+
+      card.addEventListener('click', function(e) {
+        if (e.target.tagName === 'A') return;
+        openModal(practice);
+      });
+
+      grid.appendChild(card);
+    });
+
+    container.appendChild(grid);
+  }
+
+  function openModal(practice) {
+    currentPractice = practice;
+    const sessions = allSessions.filter(s => s.practice_id === practice.id && s.bpm_played);
+
+    document.getElementById('modal-title').textContent = practice.practice_name;
+    document.getElementById('modal-subtitle').textContent = practice.class_name + ' — ' + practice.assignment_name;
+    document.getElementById('edit-goal-bpm').value = practice.goal_bpm || '';
+    document.getElementById('edit-notes').value = practice.notes || '';
+
+    // Render chart
+    if (bpmChart) bpmChart.destroy();
+    const ctx = document.getElementById('bpm-chart').getContext('2d');
+
+    if (sessions.length === 0) {
+      ctx.clearRect(0, 0, 600, 250);
+      ctx.fillStyle = '#6b6b80';
+      ctx.font = '14px DM Sans';
+      ctx.textAlign = 'center';
+      ctx.fillText('No session data yet', 300, 125);
+    } else {
+      bpmChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: sessions.map(s => formatDate(s.practiced_at)),
+          datasets: [{
+            label: 'BPM',
+            data: sessions.map(s => s.bpm_played),
+            borderColor: '#ff6b35',
+            backgroundColor: 'rgba(255,107,53,0.1)',
+            borderWidth: 2,
+            pointBackgroundColor: '#ff6b35',
+            pointRadius: 4,
+            tension: 0.3,
+            fill: true
+          },
+          ...(practice.goal_bpm ? [{
+            label: 'Goal',
+            data: sessions.map(() => practice.goal_bpm),
+            borderColor: '#2d9e6b',
+            borderWidth: 1,
+            borderDash: [6, 4],
+            pointRadius: 0,
+            fill: false
+          }] : [])
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { labels: { color: '#6b6b80', font: { family: 'DM Sans' } } } },
+          scales: {
+            x: { ticks: { color: '#6b6b80' }, grid: { color: '#2a2a3a' } },
+            y: { ticks: { color: '#6b6b80' }, grid: { color: '#2a2a3a' }, beginAtZero: false }
+          }
+        }
+      });
+    }
+
+    document.getElementById('modal-overlay').classList.add('open');
+  }
+
+  document.getElementById('modal-close').addEventListener('click', function() {
+    document.getElementById('modal-overlay').classList.remove('open');
+  });
+
+  document.getElementById('modal-overlay').addEventListener('click', function(e) {
+    if (e.target === this) this.classList.remove('open');
+  });
+
+  document.getElementById('modal-save').addEventListener('click', async function() {
+    if (!currentPractice) return;
+    const goalBpm = parseInt(document.getElementById('edit-goal-bpm').value) || null;
+    const notes = document.getElementById('edit-notes').value.trim() || null;
+    await supabaseUpdate('practices', currentPractice.id, { goal_bpm: goalBpm, notes: notes });
+    currentPractice.goal_bpm = goalBpm;
+    currentPractice.notes = notes;
+    document.getElementById('modal-overlay').classList.remove('open');
+    renderPractices();
+    updateStats();
+  });
+
+  loadData();
+</script>
+</body>
+</html>
