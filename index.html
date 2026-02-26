@@ -224,6 +224,9 @@
 </header>
 
 <main>
+  <div style="display:flex; justify-content:flex-end; margin-bottom: -24px; position:relative; z-index:98;">
+    <span id="last-updated" style="font-size:10px; color:#3a3a4a; letter-spacing:0.5px;"></span>
+  </div>
   <div class="tab-row">
     <div class="tab active skills" data-tab="skills">Skills</div>
     <div class="tab warmups" data-tab="warmups">Warm Ups</div>
@@ -642,7 +645,20 @@
     updateStats();
   });
 
-  loadData();
+  function updateTimestamp() {
+    const now = new Date();
+    const time = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+    const el = document.getElementById('last-updated');
+    if (el) el.textContent = 'Last updated: ' + time;
+  }
+
+  async function loadAndRefresh() {
+    await loadData();
+    updateTimestamp();
+  }
+
+  loadAndRefresh();
+  setInterval(loadAndRefresh, 15000);
 </script>
 </body>
 </html>
