@@ -14,10 +14,10 @@
       --surface2: #1c1c26;
       --border: #2a2a3a;
       --accent: #ff6b35;
-      --accent2: #f0a500;
       --green: #2d9e6b;
       --yellow: #f0a500;
       --red: #e84040;
+      --blue: #4a9eff;
       --text: #f0f0f5;
       --muted: #6b6b80;
       --font-display: 'Bebas Neue', sans-serif;
@@ -33,7 +33,6 @@
       min-height: 100vh;
     }
 
-    /* Header */
     header {
       border-bottom: 1px solid var(--border);
       padding: 0 40px;
@@ -48,89 +47,65 @@
       z-index: 100;
     }
 
-    .logo {
-      font-family: var(--font-display);
-      font-size: 28px;
-      letter-spacing: 2px;
-      color: var(--accent);
-    }
-
+    .logo { font-family: var(--font-display); font-size: 28px; letter-spacing: 2px; color: var(--accent); }
     .logo span { color: var(--text); }
+    .header-stats { display: flex; gap: 32px; }
+    .header-stat { text-align: center; }
+    .header-stat-value { font-family: var(--font-display); font-size: 22px; color: var(--accent); line-height: 1; }
+    .header-stat-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-top: 2px; }
 
-    .header-stats {
+    main { max-width: 1200px; margin: 0 auto; padding: 0 40px 40px; }
+
+    .tab-row {
       display: flex;
-      gap: 32px;
-    }
-
-    .header-stat {
-      text-align: center;
-    }
-
-    .header-stat-value {
-      font-family: var(--font-display);
-      font-size: 22px;
-      color: var(--accent);
-      line-height: 1;
-    }
-
-    .header-stat-label {
-      font-size: 10px;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-top: 2px;
-    }
-
-    /* Main layout */
-    main {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 40px;
-    }
-
-    /* Filter bar */
-    .filter-bar {
-      display: flex;
-      gap: 12px;
+      border-bottom: 1px solid var(--border);
       margin-bottom: 32px;
-      flex-wrap: wrap;
-      align-items: center;
+      position: sticky;
+      top: 64px;
+      background: var(--bg);
+      z-index: 99;
+      padding-top: 20px;
     }
 
-    .filter-label {
-      font-size: 11px;
+    .tab {
+      padding: 10px 24px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--muted);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
       text-transform: uppercase;
       letter-spacing: 1px;
-      color: var(--muted);
-      margin-right: 4px;
+      transition: all 0.15s;
     }
+
+    .tab:hover { color: var(--text); }
+    .tab.active.skills { color: var(--blue); border-bottom-color: var(--blue); }
+    .tab.active.warmups { color: var(--yellow); border-bottom-color: var(--yellow); }
+    .tab.disabled { color: #2a2a3a; cursor: default; }
+    .tab.disabled:hover { color: #2a2a3a; }
+
+    .filter-bar { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; align-items: center; }
+    .filter-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); }
 
     .filter-chip {
-      padding: 6px 16px;
+      padding: 5px 14px;
       border-radius: 20px;
       border: 1px solid var(--border);
       background: var(--surface);
       color: var(--muted);
-      font-size: 13px;
+      font-size: 12px;
       cursor: pointer;
       transition: all 0.15s;
       font-family: var(--font-body);
     }
 
-    .filter-chip:hover, .filter-chip.active {
-      border-color: var(--accent);
-      color: var(--accent);
-      background: rgba(255,107,53,0.08);
-    }
+    .filter-chip:hover { border-color: var(--muted); color: var(--text); }
+    .filter-chip.active { border-color: var(--accent); color: var(--accent); background: rgba(255,107,53,0.08); }
 
-    /* Practice grid */
-    .practice-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-      gap: 16px;
-    }
+    .practice-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 16px; }
 
-    /* Practice card */
     .practice-card {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -142,310 +117,86 @@
       overflow: hidden;
     }
 
-    .practice-card:hover {
-      border-color: var(--accent);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
-    }
+    .practice-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
 
-    .practice-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 3px;
-      background: var(--accent);
-      opacity: 0;
-      transition: opacity 0.2s;
-    }
+    .practice-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+    .practice-card.skill::before { background: var(--blue); }
+    .practice-card.warmup::before { background: var(--yellow); }
 
-    .practice-card:hover::before { opacity: 1; }
-
-    .card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 14px;
-      gap: 12px;
-    }
-
-    .card-title {
-      font-size: 15px;
-      font-weight: 600;
-      color: var(--text);
-      line-height: 1.3;
-    }
-
-    .card-title a {
-      color: inherit;
-      text-decoration: none;
-    }
-
+    .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; gap: 12px; }
+    .card-title { font-size: 15px; font-weight: 600; color: var(--text); line-height: 1.3; }
+    .card-title a { color: inherit; text-decoration: none; }
     .card-title a:hover { color: var(--accent); }
+    .card-subtitle { font-size: 12px; color: var(--muted); margin-top: 3px; }
 
-    .card-subtitle {
-      font-size: 12px;
-      color: var(--muted);
-      margin-top: 3px;
-    }
-
-    .last-practiced {
-      font-size: 11px;
-      padding: 3px 10px;
-      border-radius: 12px;
-      white-space: nowrap;
-      flex-shrink: 0;
-    }
-
+    .last-practiced { font-size: 11px; padding: 3px 10px; border-radius: 12px; white-space: nowrap; flex-shrink: 0; }
     .last-practiced.fresh { background: rgba(45,158,107,0.15); color: var(--green); }
     .last-practiced.stale { background: rgba(240,165,0,0.15); color: var(--yellow); }
     .last-practiced.overdue { background: rgba(232,64,64,0.15); color: var(--red); }
     .last-practiced.never { background: rgba(107,107,128,0.15); color: var(--muted); }
 
-    /* BPM display */
-    .bpm-section {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 14px;
-    }
+    .bpm-section { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
 
-    .bpm-display {
-      display: flex;
-      align-items: baseline;
-      gap: 4px;
-    }
-
-    .bpm-value {
-      font-family: var(--font-display);
-      font-size: 36px;
-      line-height: 1;
-    }
-
+    .bpm-value { font-family: var(--font-display); font-size: 40px; line-height: 1; }
     .bpm-value.green { color: var(--green); }
     .bpm-value.yellow { color: var(--yellow); }
     .bpm-value.red { color: var(--red); }
-    .bpm-value.none { color: var(--muted); font-size: 24px; }
+    .bpm-value.plain { color: var(--text); }
+    .bpm-value.none { color: var(--muted); }
 
-    .bpm-unit {
-      font-size: 11px;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
+    .bpm-unit { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+    .bpm-meta { font-size: 12px; color: var(--muted); line-height: 1.6; }
+    .bpm-meta strong { color: var(--text); }
 
-    .bpm-goal {
-      font-size: 12px;
-      color: var(--muted);
-    }
+    .progress-wrap { margin-bottom: 14px; }
+    .progress-label { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); margin-bottom: 5px; }
+    .progress-bar { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+    .progress-fill { height: 100%; border-radius: 2px; transition: width 0.5s ease; }
+    .progress-fill.green { background: var(--green); }
+    .progress-fill.yellow { background: var(--yellow); }
+    .progress-fill.red { background: var(--red); }
 
-    .bpm-goal strong { color: var(--text); }
+    .history-wrap { margin-bottom: 14px; }
+    .history-label { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); margin-bottom: 4px; }
+    .history-graph-container { position: relative; }
+    .history-graph { width: 100%; height: 48px; display: block; }
+    .history-dates { display: flex; justify-content: space-between; font-size: 10px; color: var(--muted); margin-top: 3px; opacity: 0.7; }
 
-    /* Progress bar */
-    .bpm-progress {
-      margin-bottom: 14px;
-    }
+    .card-skills { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+    .skill-tag { font-size: 11px; padding: 3px 10px; border-radius: 12px; background: var(--surface2); color: var(--muted); border: 1px solid var(--border); }
 
-    .bpm-progress-bar {
-      height: 4px;
-      background: var(--border);
-      border-radius: 2px;
-      overflow: hidden;
-    }
+    .card-notes { font-size: 12px; color: var(--muted); line-height: 1.5; font-style: italic; border-top: 1px solid var(--border); padding-top: 12px; }
 
-    .bpm-progress-fill {
-      height: 100%;
-      border-radius: 2px;
-      transition: width 0.5s ease;
-    }
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 1000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
 
-    .bpm-progress-fill.green { background: var(--green); }
-    .bpm-progress-fill.yellow { background: var(--yellow); }
-    .bpm-progress-fill.red { background: var(--red); }
+    .modal { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 32px; width: 600px; max-width: 90vw; max-height: 90vh; overflow-y: auto; }
 
-    /* Skills */
-    .card-skills {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-bottom: 14px;
-    }
-
-    .skill-tag {
-      font-size: 11px;
-      padding: 3px 10px;
-      border-radius: 12px;
-      background: var(--surface2);
-      color: var(--muted);
-      border: 1px solid var(--border);
-    }
-
-    /* Notes */
-    .card-notes {
-      font-size: 12px;
-      color: var(--muted);
-      line-height: 1.5;
-      font-style: italic;
-      border-top: 1px solid var(--border);
-      padding-top: 12px;
-    }
-
-    /* Chart modal */
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.7);
-      z-index: 1000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.2s;
-    }
-
-    .modal-overlay.open {
-      opacity: 1;
-      pointer-events: all;
-    }
-
-    .modal {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 32px;
-      width: 600px;
-      max-width: 90vw;
-      max-height: 90vh;
-      overflow-y: auto;
-    }
-
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 24px;
-    }
-
-    .modal-title {
-      font-family: var(--font-display);
-      font-size: 24px;
-      color: var(--accent);
-      letter-spacing: 1px;
-    }
-
-    .modal-subtitle {
-      font-size: 13px;
-      color: var(--muted);
-      margin-top: 4px;
-    }
-
-    .modal-close {
-      background: none;
-      border: none;
-      color: var(--muted);
-      font-size: 20px;
-      cursor: pointer;
-      padding: 0;
-      line-height: 1;
-    }
-
+    .modal-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; }
+    .modal-title { font-family: var(--font-display); font-size: 24px; color: var(--accent); letter-spacing: 1px; }
+    .modal-subtitle { font-size: 13px; color: var(--muted); margin-top: 4px; }
+    .modal-close { background: none; border: none; color: var(--muted); font-size: 20px; cursor: pointer; padding: 0; line-height: 1; }
     .modal-close:hover { color: var(--text); }
 
-    .chart-container {
-      position: relative;
-      height: 250px;
-      margin-bottom: 24px;
-    }
+    .chart-container { position: relative; height: 250px; margin-bottom: 24px; }
 
-    /* Editable fields */
-    .editable {
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 6px 10px;
-      color: var(--text);
-      font-family: var(--font-body);
-      font-size: 13px;
-      width: 100%;
-      transition: border-color 0.15s;
-    }
+    .editable { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 6px 10px; color: var(--text); font-family: var(--font-body); font-size: 13px; width: 100%; transition: border-color 0.15s; }
+    .editable:focus { outline: none; border-color: var(--accent); }
 
-    .editable:focus {
-      outline: none;
-      border-color: var(--accent);
-    }
+    .modal-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px; }
+    .modal-field label { display: block; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 5px; }
 
-    .modal-fields {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-      margin-bottom: 20px;
-    }
-
-    .modal-field label {
-      display: block;
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: var(--muted);
-      margin-bottom: 5px;
-    }
-
-    .save-btn {
-      padding: 10px 24px;
-      background: var(--accent);
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      font-family: var(--font-body);
-      transition: opacity 0.15s;
-    }
-
+    .save-btn { padding: 10px 24px; background: var(--accent); color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: var(--font-body); transition: opacity 0.15s; }
     .save-btn:hover { opacity: 0.85; }
 
-    /* Empty state */
-    .empty-state {
-      text-align: center;
-      padding: 80px 20px;
-    }
+    .empty-state { text-align: center; padding: 80px 20px; }
+    .empty-state-icon { font-size: 64px; margin-bottom: 16px; }
+    .empty-state h2 { font-family: var(--font-display); font-size: 32px; letter-spacing: 2px; color: var(--muted); margin-bottom: 8px; }
+    .empty-state p { color: var(--muted); font-size: 14px; }
 
-    .empty-state-icon {
-      font-size: 64px;
-      margin-bottom: 16px;
-    }
+    .loading { text-align: center; padding: 80px; color: var(--muted); font-family: var(--font-display); font-size: 24px; letter-spacing: 3px; animation: pulse 1.5s infinite; }
 
-    .empty-state h2 {
-      font-family: var(--font-display);
-      font-size: 32px;
-      letter-spacing: 2px;
-      color: var(--muted);
-      margin-bottom: 8px;
-    }
-
-    .empty-state p {
-      color: var(--muted);
-      font-size: 14px;
-    }
-
-    /* Loading */
-    .loading {
-      text-align: center;
-      padding: 80px;
-      color: var(--muted);
-      font-family: var(--font-display);
-      font-size: 24px;
-      letter-spacing: 3px;
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.4; }
-    }
-
-    .loading { animation: pulse 1.5s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
   </style>
 </head>
 <body>
@@ -454,8 +205,12 @@
   <div class="logo">Drum<span>Book</span></div>
   <div class="header-stats">
     <div class="header-stat">
-      <div class="header-stat-value" id="stat-total">—</div>
-      <div class="header-stat-label">Practices</div>
+      <div class="header-stat-value" id="stat-skills">—</div>
+      <div class="header-stat-label">Skills</div>
+    </div>
+    <div class="header-stat">
+      <div class="header-stat-value" id="stat-warmups">—</div>
+      <div class="header-stat-label">Warm Ups</div>
     </div>
     <div class="header-stat">
       <div class="header-stat-value" id="stat-sessions">—</div>
@@ -469,16 +224,22 @@
 </header>
 
 <main>
+  <div class="tab-row">
+    <div class="tab active skills" data-tab="skills">Skills</div>
+    <div class="tab warmups" data-tab="warmups">Warm Ups</div>
+    <div class="tab disabled">Songs (coming soon)</div>
+  </div>
+
   <div class="filter-bar" id="filter-bar">
     <span class="filter-label">Filter:</span>
     <div class="filter-chip active" data-skill="all">All</div>
   </div>
+
   <div id="practices-container"><div class="loading">LOADING...</div></div>
 </main>
 
-<!-- Detail modal -->
 <div class="modal-overlay" id="modal-overlay">
-  <div class="modal" id="modal">
+  <div class="modal">
     <div class="modal-header">
       <div>
         <div class="modal-title" id="modal-title"></div>
@@ -490,7 +251,7 @@
       <canvas id="bpm-chart"></canvas>
     </div>
     <div class="modal-fields">
-      <div class="modal-field">
+      <div class="modal-field" id="modal-goal-field">
         <label>Goal BPM</label>
         <input type="number" class="editable" id="edit-goal-bpm" placeholder="e.g. 120" />
       </div>
@@ -511,16 +272,14 @@
   let allSessions = [];
   let allSkills = [];
   let practiceSkills = [];
+  let activeTab = 'skills';
   let activeSkillFilter = 'all';
   let currentPractice = null;
   let bpmChart = null;
 
   async function supabaseFetch(path) {
     const res = await fetch(SUPABASE_URL + '/rest/v1/' + path, {
-      headers: {
-        'apikey': SUPABASE_ANON_KEY,
-        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
-      }
+      headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY }
     });
     const text = await res.text();
     return text ? JSON.parse(text) : [];
@@ -529,12 +288,7 @@
   async function supabaseUpdate(table, id, data) {
     await fetch(SUPABASE_URL + '/rest/v1/' + table + '?id=eq.' + id, {
       method: 'PATCH',
-      headers: {
-        'apikey': SUPABASE_ANON_KEY,
-        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
-        'Content-Type': 'application/json',
-        'Prefer': 'return=minimal'
-      },
+      headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
       body: JSON.stringify(data)
     });
   }
@@ -556,52 +310,79 @@
   }
 
   function updateStats() {
-    document.getElementById('stat-total').textContent = allPractices.length;
+    document.getElementById('stat-skills').textContent = allPractices.filter(p => p.entry_type === 'skill').length;
+    document.getElementById('stat-warmups').textContent = allPractices.filter(p => p.entry_type === 'warmup').length;
     document.getElementById('stat-sessions').textContent = allSessions.length;
     const due = allPractices.filter(p => {
       const last = lastSessionDate(p.id);
       if (!last) return true;
-      const days = (Date.now() - new Date(last)) / (1000 * 60 * 60 * 24);
-      return days > 14;
+      return (Date.now() - new Date(last)) / (1000 * 60 * 60 * 24) > 14;
     }).length;
     document.getElementById('stat-due').textContent = due;
   }
 
+  function sessionsForPractice(practiceId) {
+    return allSessions.filter(s => s.practice_id === practiceId);
+  }
+
   function lastSessionDate(practiceId) {
-    const sessions = allSessions.filter(s => s.practice_id === practiceId);
-    if (!sessions.length) return null;
-    return sessions[sessions.length - 1].practiced_at;
+    const s = sessionsForPractice(practiceId);
+    return s.length ? s[s.length - 1].practiced_at : null;
+  }
+
+  function firstSessionDate(practiceId) {
+    const s = sessionsForPractice(practiceId);
+    return s.length ? s[0].practiced_at : null;
   }
 
   function latestBpm(practiceId) {
-    const sessions = allSessions.filter(s => s.practice_id === practiceId && s.bpm_played);
-    if (!sessions.length) return null;
-    return sessions[sessions.length - 1].bpm_played;
+    const s = sessionsForPractice(practiceId).filter(x => x.bpm_played);
+    return s.length ? s[s.length - 1].bpm_played : null;
+  }
+
+  function firstBpm(practiceId) {
+    const s = sessionsForPractice(practiceId).filter(x => x.bpm_played);
+    return s.length ? s[0].bpm_played : null;
+  }
+
+  function bestBpm(practiceId) {
+    const s = sessionsForPractice(practiceId).filter(x => x.bpm_played);
+    return s.length ? Math.max(...s.map(x => x.bpm_played)) : null;
   }
 
   function getSkillsForPractice(practiceId) {
-    const skillIds = practiceSkills.filter(ps => ps.practice_id === practiceId).map(ps => ps.skill_id);
-    return allSkills.filter(s => skillIds.includes(s.id));
+    const ids = practiceSkills.filter(ps => ps.practice_id === practiceId).map(ps => ps.skill_id);
+    return allSkills.filter(s => ids.includes(s.id));
   }
 
   function bpmColor(current, goal) {
     if (!current || !goal) return 'none';
-    const ratio = current / goal;
-    if (ratio >= 1) return 'green';
-    if (ratio >= 0.85) return 'yellow';
+    const r = current / goal;
+    if (r >= 1) return 'green';
+    if (r >= 0.85) return 'yellow';
     return 'red';
   }
 
   function lastPracticedLabel(practiceId) {
     const date = lastSessionDate(practiceId);
-    if (!date) return { text: 'Never practiced', cls: 'never' };
+    if (!date) return { text: 'Never', cls: 'never' };
     const days = (Date.now() - new Date(date)) / (1000 * 60 * 60 * 24);
     if (days < 14) return { text: Math.floor(days) + 'd ago', cls: 'fresh' };
     if (days < 30) return { text: Math.floor(days) + 'd ago', cls: 'stale' };
     return { text: Math.floor(days) + 'd ago', cls: 'overdue' };
   }
 
-  function formatDate(dateStr) {
+  function formatDateShort(dateStr) {
+    if (!dateStr) return '';
+    const d = new Date(dateStr);
+    const now = new Date();
+    const day = d.getDate();
+    const month = d.toLocaleDateString('en-US', { month: 'short' });
+    const year = d.getFullYear();
+    return year < now.getFullYear() ? day + '-' + month + ' ' + year : day + '-' + month;
+  }
+
+  function formatDateFull(dateStr) {
     return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   }
 
@@ -625,19 +406,60 @@
     });
   }
 
+  function buildSparkline(practiceId) {
+    const sessions = sessionsForPractice(practiceId).filter(s => s.bpm_played);
+    const gradId = 'g' + practiceId.replace(/-/g, '');
+
+    if (sessions.length === 0) {
+      return '<svg class="history-graph" viewBox="0 0 300 48" preserveAspectRatio="none">' +
+        '<line x1="0" y1="24" x2="300" y2="24" stroke="#2a2a3a" stroke-width="1" stroke-dasharray="6,4"/>' +
+        '<text x="150" y="30" text-anchor="middle" fill="#3a3a4a" font-size="11" font-family="DM Sans,sans-serif">No data yet</text>' +
+        '</svg>';
+    }
+
+    const bpms = sessions.map(s => s.bpm_played);
+    const minB = Math.min(...bpms), maxB = Math.max(...bpms);
+    const range = maxB - minB || 1;
+    const W = 300, H = 48, pad = 4;
+
+    const pts = bpms.map((b, i) => {
+      const x = sessions.length === 1 ? W / 2 : (i / (sessions.length - 1)) * W;
+      const y = pad + (1 - (b - minB) / range) * (H - pad * 2);
+      return [Math.round(x * 10) / 10, Math.round(y * 10) / 10];
+    });
+
+    const polyline = pts.map(p => p[0] + ',' + p[1]).join(' ');
+    const last = pts[pts.length - 1];
+    const fill = 'M' + pts[0][0] + ',' + pts[0][1] + ' ' + pts.map(p => 'L' + p[0] + ',' + p[1]).join(' ') + ' L' + last[0] + ',' + H + ' L' + pts[0][0] + ',' + H + ' Z';
+
+    return '<svg class="history-graph" viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="none">' +
+      '<defs><linearGradient id="' + gradId + '" x1="0" y1="0" x2="0" y2="1">' +
+        '<stop offset="0%" stop-color="#f0a500" stop-opacity="0.25"/>' +
+        '<stop offset="100%" stop-color="#f0a500" stop-opacity="0"/>' +
+      '</linearGradient></defs>' +
+      '<path d="' + fill + '" fill="url(#' + gradId + ')"/>' +
+      '<polyline points="' + polyline + '" fill="none" stroke="#f0a500" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>' +
+      '<circle cx="' + last[0] + '" cy="' + last[1] + '" r="3.5" fill="#f0a500"/>' +
+      '</svg>';
+  }
+
   function renderPractices() {
     const container = document.getElementById('practices-container');
-    let practices = allPractices;
+    const entryType = activeTab === 'skills' ? 'skill' : 'warmup';
+    let practices = allPractices.filter(p => p.entry_type === entryType);
 
     if (activeSkillFilter !== 'all') {
-      const matchingPracticeIds = practiceSkills
-        .filter(ps => ps.skill_id === activeSkillFilter)
-        .map(ps => ps.practice_id);
-      practices = practices.filter(p => matchingPracticeIds.includes(p.id));
+      const matchingIds = practiceSkills.filter(ps => ps.skill_id === activeSkillFilter).map(ps => ps.practice_id);
+      practices = practices.filter(p => matchingIds.includes(p.id));
     }
 
     if (!practices.length) {
-      container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🥁</div><h2>NO PRACTICES YET</h2><p>Open a Drumeo assignment and click "Add to Practice Book"</p></div>';
+      container.innerHTML =
+        '<div class="empty-state">' +
+          '<div class="empty-state-icon">' + (activeTab === 'skills' ? '🎯' : '🥁') + '</div>' +
+          '<h2>NO ' + activeTab.toUpperCase() + ' YET</h2>' +
+          '<p>Open a Drumeo assignment and click "Add to Practice Book"</p>' +
+        '</div>';
       return;
     }
 
@@ -647,15 +469,60 @@
 
     practices.forEach(practice => {
       const card = document.createElement('div');
-      card.className = 'practice-card';
+      const isWarmup = practice.entry_type === 'warmup';
+      card.className = 'practice-card ' + (isWarmup ? 'warmup' : 'skill');
 
       const current = latestBpm(practice.id);
       const goal = practice.goal_bpm;
-      const color = bpmColor(current, goal);
+      const color = isWarmup ? 'plain' : bpmColor(current, goal);
       const lp = lastPracticedLabel(practice.id);
       const skills = getSkillsForPractice(practice.id);
 
-      const progressPct = (current && goal) ? Math.min(100, Math.round((current / goal) * 100)) : 0;
+      let bpmHtml = '';
+
+      if (isWarmup) {
+        const first = firstBpm(practice.id);
+        const best = bestBpm(practice.id);
+        const sessionCount = sessionsForPractice(practice.id).filter(s => s.bpm_played).length;
+        const firstDate = formatDateShort(firstSessionDate(practice.id));
+        const lastDate = formatDateShort(lastSessionDate(practice.id));
+
+        bpmHtml =
+          '<div class="bpm-section">' +
+            '<div>' +
+              '<div class="bpm-value ' + (current ? 'plain' : 'none') + '">' + (current || '—') + '</div>' +
+              '<div class="bpm-unit">BPM</div>' +
+            '</div>' +
+            (first
+              ? '<div class="bpm-meta">Started: <strong>' + first + '</strong><br>Best: <strong>' + best + '</strong></div>'
+              : '<div class="bpm-meta" style="color:var(--muted)">No sessions yet</div>') +
+          '</div>' +
+          '<div class="history-wrap">' +
+            '<div class="history-label"><span>Session history</span><span>' + sessionCount + ' session' + (sessionCount !== 1 ? 's' : '') + '</span></div>' +
+            '<div class="history-graph-container">' +
+              buildSparkline(practice.id) +
+              (sessionCount > 0
+                ? '<div class="history-dates"><span>' + firstDate + '</span><span>' + lastDate + '</span></div>'
+                : '') +
+            '</div>' +
+          '</div>';
+      } else {
+        const pct = (current && goal) ? Math.min(100, Math.round((current / goal) * 100)) : 0;
+        bpmHtml =
+          '<div class="bpm-section">' +
+            '<div>' +
+              '<div class="bpm-value ' + color + '">' + (current || '—') + '</div>' +
+              '<div class="bpm-unit">BPM</div>' +
+            '</div>' +
+            (goal ? '<div class="bpm-meta">Goal: <strong>' + goal + '</strong>' + (current >= goal ? ' ✓' : '') + '</div>' : '') +
+          '</div>' +
+          (goal && current
+            ? '<div class="progress-wrap">' +
+                '<div class="progress-label"><span>Progress to goal</span><span>' + pct + '%</span></div>' +
+                '<div class="progress-bar"><div class="progress-fill ' + color + '" style="width:' + pct + '%"></div></div>' +
+              '</div>'
+            : '');
+      }
 
       card.innerHTML =
         '<div class="card-header">' +
@@ -665,14 +532,7 @@
           '</div>' +
           '<div class="last-practiced ' + lp.cls + '">' + lp.text + '</div>' +
         '</div>' +
-        '<div class="bpm-section">' +
-          '<div class="bpm-display">' +
-            '<div class="bpm-value ' + color + '">' + (current || '—') + '</div>' +
-            '<div class="bpm-unit">BPM</div>' +
-          '</div>' +
-          (goal ? '<div class="bpm-goal">Goal: <strong>' + goal + '</strong></div>' : '') +
-        '</div>' +
-        (goal && current ? '<div class="bpm-progress"><div class="bpm-progress-bar"><div class="bpm-progress-fill ' + color + '" style="width:' + progressPct + '%"></div></div></div>' : '') +
+        bpmHtml +
         (skills.length ? '<div class="card-skills">' + skills.map(s => '<div class="skill-tag">' + s.name + '</div>').join('') + '</div>' : '') +
         (practice.notes ? '<div class="card-notes">' + practice.notes + '</div>' : '');
 
@@ -689,14 +549,15 @@
 
   function openModal(practice) {
     currentPractice = practice;
+    const isWarmup = practice.entry_type === 'warmup';
     const sessions = allSessions.filter(s => s.practice_id === practice.id && s.bpm_played);
 
     document.getElementById('modal-title').textContent = practice.practice_name;
     document.getElementById('modal-subtitle').textContent = practice.class_name + ' — ' + practice.assignment_name;
     document.getElementById('edit-goal-bpm').value = practice.goal_bpm || '';
     document.getElementById('edit-notes').value = practice.notes || '';
+    document.getElementById('modal-goal-field').style.display = isWarmup ? 'none' : '';
 
-    // Render chart
     if (bpmChart) bpmChart.destroy();
     const ctx = document.getElementById('bpm-chart').getContext('2d');
 
@@ -707,30 +568,32 @@
       ctx.textAlign = 'center';
       ctx.fillText('No session data yet', 300, 125);
     } else {
+      const lineColor = isWarmup ? '#f0a500' : '#ff6b35';
       bpmChart = new Chart(ctx, {
         type: 'line',
         data: {
-          labels: sessions.map(s => formatDate(s.practiced_at)),
-          datasets: [{
-            label: 'BPM',
-            data: sessions.map(s => s.bpm_played),
-            borderColor: '#ff6b35',
-            backgroundColor: 'rgba(255,107,53,0.1)',
-            borderWidth: 2,
-            pointBackgroundColor: '#ff6b35',
-            pointRadius: 4,
-            tension: 0.3,
-            fill: true
-          },
-          ...(practice.goal_bpm ? [{
-            label: 'Goal',
-            data: sessions.map(() => practice.goal_bpm),
-            borderColor: '#2d9e6b',
-            borderWidth: 1,
-            borderDash: [6, 4],
-            pointRadius: 0,
-            fill: false
-          }] : [])
+          labels: sessions.map(s => formatDateFull(s.practiced_at)),
+          datasets: [
+            {
+              label: 'BPM',
+              data: sessions.map(s => s.bpm_played),
+              borderColor: lineColor,
+              backgroundColor: lineColor + '1a',
+              borderWidth: 2,
+              pointBackgroundColor: lineColor,
+              pointRadius: 4,
+              tension: 0.3,
+              fill: true
+            },
+            ...(!isWarmup && practice.goal_bpm ? [{
+              label: 'Goal',
+              data: sessions.map(() => practice.goal_bpm),
+              borderColor: '#2d9e6b',
+              borderWidth: 1,
+              borderDash: [6, 4],
+              pointRadius: 0,
+              fill: false
+            }] : [])
           ]
         },
         options: {
@@ -748,6 +611,15 @@
     document.getElementById('modal-overlay').classList.add('open');
   }
 
+  document.querySelectorAll('.tab[data-tab]').forEach(tab => {
+    tab.addEventListener('click', function() {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      activeTab = tab.getAttribute('data-tab');
+      renderPractices();
+    });
+  });
+
   document.getElementById('modal-close').addEventListener('click', function() {
     document.getElementById('modal-overlay').classList.remove('open');
   });
@@ -760,7 +632,9 @@
     if (!currentPractice) return;
     const goalBpm = parseInt(document.getElementById('edit-goal-bpm').value) || null;
     const notes = document.getElementById('edit-notes').value.trim() || null;
-    await supabaseUpdate('practices', currentPractice.id, { goal_bpm: goalBpm, notes: notes });
+    const updateData = { notes };
+    if (currentPractice.entry_type !== 'warmup') updateData.goal_bpm = goalBpm;
+    await supabaseUpdate('practices', currentPractice.id, updateData);
     currentPractice.goal_bpm = goalBpm;
     currentPractice.notes = notes;
     document.getElementById('modal-overlay').classList.remove('open');
