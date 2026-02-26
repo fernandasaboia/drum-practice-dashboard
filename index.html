@@ -206,7 +206,7 @@
   <div class="header-stats">
     <div class="header-stat">
       <div class="header-stat-value" id="stat-skills">—</div>
-      <div class="header-stat-label">Skills</div>
+      <div class="header-stat-label">Exercises</div>
     </div>
     <div class="header-stat">
       <div class="header-stat-value" id="stat-warmups">—</div>
@@ -228,7 +228,7 @@
     <span id="last-updated" style="font-size:10px; color:#3a3a4a; letter-spacing:0.5px;"></span>
   </div>
   <div class="tab-row">
-    <div class="tab active skills" data-tab="skills">Skills</div>
+    <div class="tab active skills" data-tab="skills">Exercises</div>
     <div class="tab warmups" data-tab="warmups">Warm Ups</div>
     <div class="tab disabled">Songs (coming soon)</div>
   </div>
@@ -313,7 +313,7 @@
   }
 
   function updateStats() {
-    document.getElementById('stat-skills').textContent = allPractices.filter(p => p.entry_type === 'skill').length;
+    document.getElementById('stat-skills').textContent = allPractices.filter(p => p.entry_type === 'exercise').length;
     document.getElementById('stat-warmups').textContent = allPractices.filter(p => p.entry_type === 'warmup').length;
     document.getElementById('stat-sessions').textContent = allSessions.length;
     const due = allPractices.filter(p => {
@@ -448,7 +448,7 @@
 
   function renderPractices() {
     const container = document.getElementById('practices-container');
-    const entryType = activeTab === 'skills' ? 'skill' : 'warmup';
+    const entryType = activeTab === 'skills' ? 'exercise' : 'warmup';
     let practices = allPractices.filter(p => p.entry_type === entryType);
 
     if (activeSkillFilter !== 'all') {
@@ -472,7 +472,7 @@
 
     practices.forEach(practice => {
       const card = document.createElement('div');
-      const isWarmup = practice.entry_type === 'warmup';
+      const isWarmup = practice.entry_type !== 'exercise';
       card.className = 'practice-card ' + (isWarmup ? 'warmup' : 'skill');
 
       const current = latestBpm(practice.id);
@@ -552,7 +552,7 @@
 
   function openModal(practice) {
     currentPractice = practice;
-    const isWarmup = practice.entry_type === 'warmup';
+    const isWarmup = practice.entry_type !== 'exercise';
     const sessions = allSessions.filter(s => s.practice_id === practice.id && s.bpm_played);
 
     document.getElementById('modal-title').textContent = practice.practice_name;
